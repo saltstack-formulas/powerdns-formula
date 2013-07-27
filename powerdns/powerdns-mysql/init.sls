@@ -55,7 +55,19 @@ powerdns-mysql_config:
       - pkg: powerdns-mysql
 
 
-create-tables:
-  module.run:
-    - name: mysql.query
-    - **kwargs: powerdns "CREATE TABLE records (id INT auto_increment,domain_id INT DEFAULT NULL,name VARCHAR(255) DEFAULT NULL,type VARCHAR(6) DEFAULT NULL,content VARCHAR(255) DEFAULT NULL,ttl INT DEFAULT NULL,prio INT DEFAULT NULL,change_date INT DEFAULT NULL,primary key(id), INDEX rec_name_index (name),INDEX nametype_index (name,type),INDEX domain_id (domain_id));"
+mysql-init-script:
+  file.managed:
+    - name: /tmp/powerdns_mysql_init.sql
+    - source: salt://powerdns/config/init.sql
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - file: powerdns-mysql_config
+
+mysql-run-script:
+  cmd.run:
+    - name: mysql -u {{ user }} -p{{ pass }} < /tmp/powerdns_mysql_init.sql
+    - require:
+      - file: mysql-init-script
+
