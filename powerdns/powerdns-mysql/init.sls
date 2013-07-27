@@ -32,7 +32,7 @@ powerdns-mysql_user:
   mysql_user.present:
     - name: {{ user }}
     - host: {{ host }}
-    - password_hash: {{ pass_hash }}
+    - password_hash: '{{ pass_hash }}'
     - require:
       - pkg: powerdns-mysql
       - service: mysql-client
