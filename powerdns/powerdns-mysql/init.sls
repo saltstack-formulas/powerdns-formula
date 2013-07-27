@@ -67,7 +67,7 @@ mysql-init-script:
 
 mysql-run-script:
   cmd.run:
-    - name: mysql -u {{ user }} -p{{ pass }} < /tmp/powerdns_mysql_init.sql
+    - name: mysql powerdns -u {{ user }} -p{{ pass }} < /tmp/powerdns_mysql_init.sql
     - require:
       - file: mysql-init-script
 
