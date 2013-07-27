@@ -12,9 +12,6 @@
 {% set powerdns = pillar.get('powerdns', {}) -%}
 {% set config_path = powerdns.get('config_path_local', {}) -%}
 
-include:
-  - mysql.client
-
 powerdns-mysql:
   pkg.installed:
     - name: {{ name }}
@@ -25,7 +22,7 @@ powerdns-mysql_db:
     - name: powerdns
     - require:
       - pkg: powerdns-mysql
-      - service: mysql-client
+      
 
 
 powerdns-mysql_user:
@@ -35,7 +32,7 @@ powerdns-mysql_user:
     - password_hash: '{{ pass_hash }}'
     - require:
       - pkg: powerdns-mysql
-      - service: mysql-client
+      
 
 powerdns-mysql_grants:
   mysql_grants.present:
