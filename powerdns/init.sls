@@ -1,7 +1,12 @@
 {% set powerdns = pillar.get('powerdns', {}) -%}
 {% set package = powerdns.get('package', {}) -%}
 {% set service = powerdns.get('service', {}) -%}
+
+
+{% set powerdns = pillar.get('powerdns', {}) -%}
 {% set config_path = powerdns.get('config_path', {}) -%}
+
+
 
 powerdns:
   pkg.installed:
