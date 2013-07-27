@@ -1,0 +1,14 @@
+{% set powerdns_mysql = pillar.get('powerdns_backend_mysql', {}) -%}
+{% set mysql = powerdns_mysql.get('mysql', {}) -%}
+{% set user = mysql.get('user', {}) -%}
+{% set host = mysql.get('host', {}) -%}
+{% set pass = mysql.get('pass', {}) -%}
+
+
+# Here comes the local changes the user made, like configuration of
+# the several backends that exists.
+
+gmysql-host={{ host }} 
+gmysql-user={{ user }}
+gmysql-password={{ pass }}
+gmysql-dbname=powerdns
