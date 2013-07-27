@@ -1,4 +1,4 @@
-{% set powerdns-mysql = pillar.get('powerdns-backend-mysql', {}) -%}
+{% set powerdns-mysql = pillar.get('powerdns_backend_mysql', {}) -%}
 {% set package = powerdns-mysql.get('package', {}) -%}
 {% set name = package.get('name', {}) -%}
 {% set version = package.get('version', {}) -%}
