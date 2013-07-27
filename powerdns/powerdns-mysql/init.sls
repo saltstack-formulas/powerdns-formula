@@ -37,7 +37,7 @@ powerdns-mysql_user:
 powerdns-mysql_grants:
   mysql_grants.present:
     - grant: all privileges
-    - database: powerdns
+    - database: powerdns.*
     - user: {{ user }}
     - host: {{ host }} 
     - require:
@@ -53,3 +53,9 @@ powerdns-mysql_config:
     - mode: 600
     - require:
       - pkg: powerdns-mysql
+
+
+create-tables:
+  module.run:
+    - name: mysql.query
+    - **kwargs: powerdns "CREATE TABLE records (id INT auto_increment,domain_id INT DEFAULT NULL,name VARCHAR(255) DEFAULT NULL,type VARCHAR(6) DEFAULT NULL,content VARCHAR(255) DEFAULT NULL,ttl INT DEFAULT NULL,prio INT DEFAULT NULL,change_date INT DEFAULT NULL,primary key(id), INDEX rec_name_index (name),INDEX nametype_index (name,type),INDEX domain_id (domain_id));"
