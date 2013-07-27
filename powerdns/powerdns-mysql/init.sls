@@ -1,5 +1,5 @@
-{% set powerdns-mysql = pillar.get('powerdns_backend_mysql', {}) -%}
-{% set package = powerdns-mysql.get('package', {}) -%}
+{% set powerdns_mysql = pillar.get('powerdns_backend_mysql', {}) %}
+{% set package = powerdns_mysql.get('package', {}) -%}
 {% set name = package.get('name', {}) -%}
 {% set version = package.get('version', {}) -%}
 
@@ -11,6 +11,9 @@
 
 {% set powerdns = pillar.get('powerdns', {}) -%}
 {% set config_path = powerdns.get('config_path_local', {}) -%}
+
+include:
+  - mysql.client
 
 powerdns-mysql:
   pkg.installed:
