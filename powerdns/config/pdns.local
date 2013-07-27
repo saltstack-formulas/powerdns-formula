@@ -1,5 +1,5 @@
-{% set powerdns-mysql = pillar.get('powerdns-backend-mysql', {}) -%}
-{% set mysql = powerdns-mysql.get('mysql', {}) -%}
+{% set powerdns_mysql = pillar.get('powerdns_backend_mysql', {}) -%}
+{% set mysql = powerdns_mysql.get('mysql', {}) -%}
 {% set user = mysql.get('user', {}) -%}
 {% set host = mysql.get('host', {}) -%}
 {% set pass = mysql.get('pass', {}) -%}
