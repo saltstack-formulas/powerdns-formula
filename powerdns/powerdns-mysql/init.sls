@@ -3,7 +3,7 @@
 {% set name = package.get('name', {}) -%}
 {% set version = package.get('version', {}) -%}
 
-{% set mysql = powerdns-mysql.get('mysql', {}) -%}
+{% set mysql = powerdns_mysql.get('mysql', {}) -%}
 {% set user = mysql.get('user', {}) -%}
 {% set host = mysql.get('host', {}) -%}
 {% set pass = mysql.get('pass', {}) -%}
