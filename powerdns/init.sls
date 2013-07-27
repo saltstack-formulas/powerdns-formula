@@ -1,11 +1,13 @@
 {% set powerdns = pillar.get('powerdns', {}) -%}
+{% set package = powerdns.get('package', {}) -%}
+{% set service = powerdns.get('service', {}) -%}
 
 powerdns:
   pkg.installed:
-    - name: {{ powerdns.get('package:name') }}
-    - version: {{ powerdns.get('package:version') }}
+    - name: {{ package.get('name') }}
+    - version: {{ package.get('version') }}
 
   service.running:
-    - name: {{ powerdns.get('service') }}
+    - name: {{ service }}
     - require:
       - pkg: powerdns
