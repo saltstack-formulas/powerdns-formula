@@ -1,0 +1,23 @@
+### POWERDNS
+powerdns:
+  package:
+{% if grains['os'] == 'Debian' %}
+    name: pdns-server
+    version: 2.9.22-8+squeeze1
+  service: pdns
+  config_path: /etc/powerdns/pdns.conf
+{% endif %}
+  address_to_bind: 10.32.0.8
+
+powerdns-backend-mysql:
+  package:
+{% if grains['os'] == 'Debian' %}
+    name: pdns-backend-mysql
+    version: 2.9.22-8+squeeze1
+{% endif %}
+  mysql:
+    user: power_dns
+    host: localhost
+    pass: salt
+    pass_hash: '*36F75ABC6D500DFA6E905046FD8BE5E115812DD0'
+    
