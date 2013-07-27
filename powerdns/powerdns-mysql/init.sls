@@ -40,6 +40,8 @@ powerdns-mysql_grants:
     - database: powerdns
     - user: {{ user }}
     - host: {{ host }} 
+    - require:
+      - mysql_user: powerdns-mysql_user
 
 powerdns-mysql_config:
   file.managed:
