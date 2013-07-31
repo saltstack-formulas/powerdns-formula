@@ -1,5 +1,6 @@
 {% set powerdns_mysql = pillar.get('powerdns_backend_mysql', {}) -%}
 {% set mysql = powerdns_mysql.get('mysql', {}) -%}
+{% set database = mysql.get('database', {}) -%}
 {% set user = mysql.get('user', {}) -%}
 {% set host = mysql.get('host', {}) -%}
 {% set pass = mysql.get('pass', {}) -%}
@@ -11,4 +12,4 @@
 gmysql-host={{ host }} 
 gmysql-user={{ user }}
 gmysql-password={{ pass }}
-gmysql-dbname=powerdns
+gmysql-dbname= {{ database }}

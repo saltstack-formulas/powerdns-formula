@@ -1,7 +1,8 @@
 {% set powerdns = pillar.get('powerdns', {}) -%}
 {% set package = powerdns.get('package', {}) -%}
 {% set service = powerdns.get('service', {}) -%}
-{% set config_path = powerdns.get('config_path', {}) -%}
+{% set config = powerdns.get('config', {}) -%}
+{% set config_file = config.get('file', {}) -%}
 
 powerdns:
   pkg.installed:
@@ -15,7 +16,7 @@ powerdns:
 
 powerdns_config:
   file.managed:
-    - name: {{ config_path }}
+    - name: {{ config_file }}
     - source: salt://powerdns/config/pdns.conf
     - template: jinja
     - user: root
