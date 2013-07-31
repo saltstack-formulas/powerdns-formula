@@ -1,73 +1,91 @@
-{% set powerdns_mysql = pillar.get('powerdns_backend_mysql', {}) %}
-{% set package = powerdns_mysql.get('package', {}) -%}
-{% set name = package.get('name', {}) -%}
-{% set version = package.get('version', {}) -%}
-
-{% set mysql = powerdns_mysql.get('mysql', {}) -%}
+{% set mysql = config.get('mysql', {}) -%}
+{% set database = mysql.get('database', {}) -%}
 {% set user = mysql.get('user', {}) -%}
 {% set host = mysql.get('host', {}) -%}
 {% set pass = mysql.get('pass', {}) -%}
-{% set pass_hash = mysql.get('pass_hash', {}) -%}
+{% set password_hash = mysql.get('password_hash', {}) -%}
 
-{% set powerdns = pillar.get('powerdns', {}) -%}
-{% set config_path = powerdns.get('config_path_local', {}) -%}
+{% set config_file = config.get('file', {}) -%}
 
-powerdns-mysql:
+include:
+  - mysql.server
+  - mysql.client
+  - powerdns
+
+powerdns-backend-mysql:
   pkg.installed:
     - name: {{ name }}
     - version: {{ version }}
-
-powerdns-mysql_db:
-  mysql_database.present:
-    - name: powerdns
     - require:
-      - pkg: powerdns-mysql
+      - file: powerdns_config
+      - service: mysql-server
+
+powerdns-backend-mysql_db:
+  mysql_database.present:
+    - name: {{ database }}
+    - connection_user: root
+    - connection_pass: {{ pillar['mysql']['users']['root']['password']['cleartext'] }}
+    - require:
+      - pkg: powerdns-backend-mysql
+      - service: mysql-server
+      - mysql_user: mysql_root_user_localhost
       
-
-
-powerdns-mysql_user:
+powerdns-backend-mysql_user:
   mysql_user.present:
     - name: {{ user }}
     - host: {{ host }}
-    - password_hash: '{{ pass_hash }}'
+    - password_hash: '{{ password_hash }}'
+    - connection_user: root
+    - connection_pass: {{ pillar['mysql']['users']['root']['password']['cleartext'] }}
     - require:
-      - pkg: powerdns-mysql
+      - pkg: powerdns-backend-mysql
+      - service: mysql-server
+      - mysql_database: powerdns-backend-mysql_db
       
 
-powerdns-mysql_grants:
+powerdns-backend-mysql_grants:
   mysql_grants.present:
     - grant: all privileges
-    - database: powerdns.*
+    - database: {{ database }}.*
     - user: {{ user }}
     - host: {{ host }} 
+    - connection_user: root
+    - connection_pass: {{ pillar['mysql']['users']['root']['password']['cleartext'] }}
     - require:
-      - mysql_user: powerdns-mysql_user
+      - pkg: powerdns-backend-mysql
+      - mysql_user: powerdns-backend-mysql_user
+      - mysql_user: mysql_root_user_localhost
 
-powerdns-mysql_config:
+powerdns-backend-mysql_config:
   file.managed:
-    - name: {{ config_path }}
+    - name: {{ config_file }}
     - source: salt://powerdns/config/pdns.local
     - template: jinja
     - user: root
     - group: root
     - mode: 600
     - require:
-      - pkg: powerdns-mysql
+      - pkg: powerdns-backend-mysql
 
-
-mysql-init-script:
+powerdns-backend-mysql_init_script:
   file.managed:
     - name: /tmp/powerdns_mysql_init.sql
     - source: salt://powerdns/config/init.sql
     - user: root
     - group: root
     - mode: 644
+    - unless: mysql {{ database }} -u {{ user }} -p{{ pass }} -e "SELECT * FROM domains;"
     - require:
-      - file: powerdns-mysql_config
+      - file: powerdns-backend-mysql_config
+      - pkg: powerdns-backend-mysql
+      - pkg: mysql-client
+      - mysql_grants: powerdns-backend-mysql_grants
 
-mysql-run-script:
+powerdns-backend-mysql_run_script:
   cmd.run:
-    - name: mysql powerdns -u {{ user }} -p{{ pass }} < /tmp/powerdns_mysql_init.sql
+    - name: mysql {{ database }} -u {{ user }} -p{{ pass }} < /tmp/powerdns_mysql_init.sql
     - require:
-      - file: mysql-init-script
+      - file: powerdns-backend-mysql_init_script
+      - pkg: powerdns-backend-mysql
+      - pkg: mysql-client
 
