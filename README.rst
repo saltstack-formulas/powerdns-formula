@@ -1,12 +1,46 @@
 powerdns
 ========
 
-Installs a basic powerdns server, and configures the backend for mysql.
+Installs a basic PowerDNS authorative server, and enables different backend configurations.
+
+.. note::
+
+    See the full `Salt Formulas installation and usage instructions
+    <http://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html>`_.
 
 
 Usage
 =====
 
 All the configuration for powerdns is done via pillar (pillar.example).
-You can set all the package data depending on your operating system, local address to bind on and all the configuration needed for the communication with mysql
 
+
+Available states
+================
+
+.. contents::
+    :local:
+
+
+``powerdns``
+------------
+
+Installs PowerDNS authorative server.
+
+
+``powerdns.repo``
+-----------------
+
+Installs PowerDNS authorative server from official repostiory.
+
+
+``powerdns.backend-mysql``
+--------------------------
+
+Installs PowerDNS MySQL backend package.
+
+
+``powerdns.config``
+-------------------
+
+Configures PowerDNS authorative server.
