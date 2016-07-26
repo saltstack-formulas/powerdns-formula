@@ -5,9 +5,9 @@ powerdns:
 
   config:
     allow-axfr-ips: '127.0.0.0/8,::1'
-    api: yes
+    api: 'yes'
     api-key: d34db33f
-    webserver: yes
+    webserver: 'yes'
     webserver-port: 8081
 
     launch: gmysql
@@ -15,4 +15,4 @@ powerdns:
     gmysql-port: 3306
     gmysql-user: pdns
     gmysql-password: mys3cr3tdbp4ssw0rd
-    gmysql-dnssec: yes
+    gmysql-dnssec: 'yes'
