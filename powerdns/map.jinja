@@ -36,7 +36,6 @@
     'config': salt['grains.filter_by']({
         'Debian': {
             'config-dir': '/etc/powerdns',
-            'include-dir': '/etc/powerdns/pdns.d',
             'setgid': 'pdns',
             'setuid': 'pdns',
             'launch': '',
