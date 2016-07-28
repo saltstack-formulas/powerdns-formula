@@ -1,34 +1,17 @@
-{% set powerdns = pillar.get('powerdns', {}) -%}
-{% set package = powerdns.get('package', {}) -%}
-{% set service = powerdns.get('service', {}) -%}
-{% set config = powerdns.get('config', {}) -%}
-{% set config_file = config.get('file', {}) -%}
+{% from "powerdns/map.jinja" import powerdns with context %}
+
+include:
+  - powerdns.repo
 
 powerdns:
   pkg.installed:
-    - name: {{ package.get('name') }}
-    - version: {{ package.get('version') }}
+    - name: {{ powerdns.lookup.pkg }}
+    - refresh_db: True
+    - require:
+      - sls: powerdns.repo
 
   service.running:
-    - name: {{ service }}
+    - name: {{ powerdns.lookup.service }}
+    - enable: True
     - require:
       - pkg: powerdns
-
-powerdns_config:
-  file.managed:
-    - name: {{ config_file }}
-    - source: salt://powerdns/config/pdns.conf
-    - template: jinja
-    - user: root
-    - group: root
-    - mode: 600
-    - require:
-      - pkg: powerdns
-
-extend:
-  powerdns:
-    service:
-      - running
-      - reload: True
-      - watch:
-        - file: powerdns_config
