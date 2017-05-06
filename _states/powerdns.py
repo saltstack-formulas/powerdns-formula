@@ -65,11 +65,13 @@ def record_present(zone, name, record_type, ttl=300, records=[]):
            'result': False,
            'comment': ''}
     old_record = __salt__['powerdns.get_record'](zone, name, record_type)
-    new_record = __salt__['powerdns.add_record'](zone, name, record_type, ttl, records=records)
-    if new_record:
+    if __salt__['powerdns.add_record'](zone, name, record_type, ttl, records=records):
         ret['result'] = True
         ret['comment'] = "Record present"
-
-    ret['changes'] = { name : { 'new': { 'zone': zone, 'name': name, 'type': record_type, 'ttl': ttl, 'records': records }, 'old': old_record } }
+        new_record = __salt__['powerdns.get_record'](zone, name, record_type)
+        if new_record == old_record:
+            ret['changes'] = {}
+        else:    
+            ret['changes'] = { name : { 'new': { 'zone': zone, 'name': name, 'type': record_type, 'ttl': ttl, 'records': records }, 'old': old_record } }
     
     return ret
