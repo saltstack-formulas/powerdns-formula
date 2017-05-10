@@ -1,0 +1,59 @@
+azone.test.present:
+  powerdns.zone_present:
+    - name: azone.test
+
+azone.test.SOA:
+  powerdns.record_present:
+    - zone: azone.test
+    - name: azone.test
+    - record_type: 'SOA'
+    - records:
+      - ns1.azone.test. hostmaster.azone.test. 1 10800 3600 604800 300
+    - require:
+      - powerdns: azone.test.present
+
+azone.test.A:
+  powerdns.record_present:
+    - zone: azone.test
+    - name: azone.test
+    - record_type: 'A'
+    - records:
+      - 127.0.0.1
+    - require:
+      - powerdns: azone.test.present
+
+azone.test.A.1:
+  powerdns.record_present:
+    - zone: azone.test
+    - name: azone.test
+    - record_type: 'A'
+    - records:
+      - 127.0.0.1
+    - require:
+      - powerdns: azone.test.present
+
+azone.test.A.2:
+  powerdns.record_present:
+    - zone: azone.test
+    - name: azone.test
+    - record_type: 'A'
+    - records:
+      - 127.0.0.2
+    - require:
+      - powerdns: azone.test.present
+
+foo.azone.test.A:
+  powerdns.record_present:
+    - zone: azone.test
+    - name: foo.azone.test
+    - record_type: 'A'
+    - records:
+      - 127.0.0.1
+    - require:
+      - powerdns: azone.test.present
+
+azone.test.absent:
+  powerdns.zone_absent:
+    - name: azone.test
+    - require:
+      - powerdns: azone.test.present
