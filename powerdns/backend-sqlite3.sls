@@ -23,7 +23,7 @@ powerdns_init_db:
     - creates: {{ powerdns.config['gsqlite3-database'] }}
     - require:
       - pkg: powerdns_backend_sqlite3
-      - file: /var/lib/powerdns
+      - file: {{ salt.file.dirname(powerdns.config['gsqlite3-database']) }}
 
 {{ powerdns.config['gsqlite3-database'] }}:
   file.managed:
