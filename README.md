@@ -28,7 +28,8 @@ Installs PowerDNS authorative server from official repostiory.
 
 Installs PowerDNS MySQL backend package.
 
-`powerdns.backend-sqlite3` ————————–
+`powerdns.backend-sqlite3`
+--------------------------
 
 Installs PowerDNS sqlite3 backend package. Initializes sqlite3 db specified in config pillar.
 
