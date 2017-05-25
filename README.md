@@ -3,7 +3,7 @@ powerdns
 
 Installs a basic PowerDNS authorative server, and enables different backend configurations.
 
-See the full [Salt Formulas installation and usage instructions].
+See the full [Salt Formulas installation and usage instructions](http://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html).
 
 Usage
 =====
