@@ -54,13 +54,15 @@ Configures PowerDNS authorative server.
 ``powerdns.api``
 ----------------
 
-Installes the required pdnsapi python module.  Requires pip to work.
+Installs the required pdnsapi python module. Requires pip to work.
 
-To use this module, you need to have the following set either in pillar or your
-minion config:
-```yaml
-pdns..url: "http://127.0.0.1:8081"
-pdns.server_id: "localhost"
-pdns.api_key: "deadbeef"
-```
+To use this module, you need to have the following set either in pillar
+or your minion config:
+
+.. code:: SaltStack
+
+
+    pdns.url: "http://127.0.0.1:8081"
+    pdns.server_id: "localhost"
+    pdns.api_key: "deadbeef"
 
