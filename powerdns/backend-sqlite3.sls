@@ -1,11 +1,12 @@
-{% from "powerdns/map.jinja" import powerdns with context %}
+{%- set tplroot = tpldir.split('/')[0] %}
+{%- from tplroot ~ "/map.jinja" import powerdns with context %}
 
 include:
   - powerdns
 
 powerdns_backend_sqlite3:
   pkg.installed:
-    - name: {{ powerdns.lookup.backend_sqlite3_pkg }}
+    - name: {{ powerdns.backend_sqlite3_pkg }}
     - require:
       - pkg: powerdns
 

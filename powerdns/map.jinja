@@ -1,71 +1,49 @@
-{% set powerdns = salt['pillar.get']('powerdns', {
-    'lookup': salt['grains.filter_by']({
-        'Debian': {
-            'pkg': 'pdns-server',
-            'config_file': '/etc/powerdns/pdns.conf',
-            'service': 'pdns',
-            'backend_geoip_pkg': 'pdns-backend-geoip',
-            'backend_ldap_pkg': 'pdns-backend-ldap',
-            'backend_lua_pkg': 'pdns-backend-lua',
-            'backend_mydns_pkg': 'pdns-backend-mydns',
-            'backend_mysql_pkg': 'pdns-backend-mysql',
-            'backend_odbc_pkg': 'pdns-backend-odbc',
-            'backend_opendbx_pkg': 'pdns-backend-opendbx',
-            'backend_pgsql_pkg': 'pdns-backend-pgsql',
-            'backend_pipe_pkg': 'pdns-backend-pipe',
-            'backend_remote_pkg': 'pdns-backend-remote',
-            'backend_sqlite3_pkg': 'pdns-backend-sqlite3',
-        },
-        'RedHat': {
-            'pkg': 'pdns',
-            'config_file': '/etc/pdns/pdns.conf',
-            'service': 'pdns',
-            'backend_geoip_pkg': 'pdns-backend-geoip',
-            'backend_ldap_pkg': 'pdns-backend-ldap',
-            'backend_lua_pkg': 'pdns-backend-lua',
-            'backend_mydns_pkg': 'pdns-backend-mydns',
-            'backend_mysql_pkg': 'pdns-backend-mysql',
-            'backend_odbc_pkg': 'pdns-backend-odbc',
-            'backend_opendbx_pkg': 'pdns-backend-opendbx',
-            'backend_pgsql_pkg': 'pdns-backend-pgsql',
-            'backend_pipe_pkg': 'pdns-backend-pipe',
-            'backend_remote_pkg': 'pdns-backend-remote',
-            'backend_sqlite3_pkg': 'pdns-backend-sqlite3',
-        },
-        'Suse': {
-            'pkg': 'pdns',
-            'config_file': '/etc/pdns/pdns.conf',
-            'service': 'pdns',
-            'backend_geoip_pkg': 'pdns-backend-geoip',
-            'backend_ldap_pkg': 'pdns-backend-ldap',
-            'backend_lua_pkg': 'pdns-backend-lua',
-            'backend_mydns_pkg': 'pdns-backend-mydns',
-            'backend_mysql_pkg': 'pdns-backend-mysql',
-            'backend_odbc_pkg': 'pdns-backend-odbc',
-            'backend_opendbx_pkg': 'pdns-backend-opendbx',
-            'backend_pgsql_pkg': 'pdns-backend-pgsql',
-            'backend_pipe_pkg': 'pdns-backend-pipe',
-            'backend_remote_pkg': 'pdns-backend-remote',
-            'backend_sqlite3_pkg': 'pdns-backend-sqlite3',
-        },
-    }),
-    'config': salt['grains.filter_by']({
-        'Debian': {
-            'config-dir': '/etc/powerdns',
-            'setgid': 'pdns',
-            'setuid': 'pdns',
-            'launch': '',
-        },
-        'RedHat': {
-            'daemon': 'no',
-            'guardian': 'no',
-            'setgid': 'pdns',
-            'setuid': 'pdns',
-            'launch': '',
-        },
-    }),
-    'repo': {
-        'release': '40',
-        'keyid': '1B0C6205FD380FBB',
-    },
-}, merge=True) %}
+# -*- coding: utf-8 -*-
+# vim: ft=jinja
+
+{#- Get the `tplroot` from `tpldir` #}
+{%- set tplroot = tpldir.split('/')[0] %}
+{#- Start imports as #}
+{%- import_yaml tplroot ~ "/defaults.yaml" as default_settings %}
+{%- import_yaml tplroot ~ "/osarchmap.yaml" as osarchmap %}
+{%- import_yaml tplroot ~ "/osfamilymap.yaml" as osfamilymap %}
+{%- import_yaml tplroot ~ "/osmap.yaml" as osmap %}
+{%- import_yaml tplroot ~ "/osfingermap.yaml" as osfingermap %}
+
+{#- Retrieve the config dict only once #}
+{%- set _config = salt['config.get'](tplroot, default={}) %}
+
+{%- set defaults = salt['grains.filter_by'](
+      default_settings,
+      default=tplroot,
+      merge=salt['grains.filter_by'](
+        osarchmap,
+        grain='osarch',
+        merge=salt['grains.filter_by'](
+          osfamilymap,
+          grain='os_family',
+          merge=salt['grains.filter_by'](
+            osmap,
+            grain='os',
+            merge=salt['grains.filter_by'](
+              osfingermap,
+              grain='osfinger',
+              merge=salt['grains.filter_by'](
+                _config,
+                default='lookup'
+              )
+            )
+          )
+        )
+      )
+    )
+%}
+
+{%- set config = salt['grains.filter_by'](
+      {'defaults': defaults},
+      default='defaults',
+      merge=_config
+    )
+%}
+
+{%- set powerdns = config %}
