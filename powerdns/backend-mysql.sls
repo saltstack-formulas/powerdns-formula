@@ -9,3 +9,5 @@ powerdns_backend_mysql:
     - name: {{ powerdns.backend_mysql_pkg }}
     - require:
       - pkg: powerdns
+    - watch_in:
+      - service: {{ powerdns.service }}

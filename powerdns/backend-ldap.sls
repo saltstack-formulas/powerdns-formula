@@ -9,3 +9,5 @@ powerdns_backend_ldap:
     - name: {{ powerdns.backend_ldap_pkg }}
     - require:
       - pkg: powerdns
+    - watch_in:
+      - service: {{ powerdns.service }}

@@ -9,6 +9,8 @@ powerdns_backend_sqlite3:
     - name: {{ powerdns.backend_sqlite3_pkg }}
     - require:
       - pkg: powerdns
+    - watch_in:
+      - service: {{ powerdns.service }}
 
 #/var/lib/powerdns:
 {{ salt.file.dirname(powerdns.config['gsqlite3-database']) }}:
