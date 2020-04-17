@@ -178,6 +178,7 @@ suites:
       state_top:
         base:
           '*':
+            - powerdns.yaml_dump
             - powerdns.config
             - powerdns.backend-sqlite3
       pillars:
