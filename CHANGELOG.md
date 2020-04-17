@@ -1,5 +1,17 @@
 # Changelog
 
+# [0.3.0](https://github.com/saltstack-formulas/powerdns-formula/compare/v0.2.2...v0.3.0) (2020-04-17)
+
+
+### Bug Fixes
+
+* **watchin:** fix missing `watch_in`s on `powerdns` service ([38fa08b](https://github.com/saltstack-formulas/powerdns-formula/commit/38fa08b2fb71fb6e16234af3387a5dce90aa787d))
+
+
+### Features
+
+* **ldap:** add LDAP Backend support ([3dc0675](https://github.com/saltstack-formulas/powerdns-formula/commit/3dc06757bde1ae15898b370381abf4030c93ddb0))
+
 ## [0.2.2](https://github.com/saltstack-formulas/powerdns-formula/compare/v0.2.1...v0.2.2) (2020-04-17)
 
 
