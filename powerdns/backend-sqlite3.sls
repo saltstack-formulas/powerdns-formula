@@ -13,8 +13,8 @@ powerdns_backend_sqlite3:
 #/var/lib/powerdns:
 {{ salt.file.dirname(powerdns.config['gsqlite3-database']) }}:
   file.directory:
-    - user: pdns
-    - group: pdns
+    - user: {{ powerdns.user }}
+    - group: {{ powerdns.group }}
     - require:
       - pkg: powerdns_backend_sqlite3
 
@@ -28,8 +28,8 @@ powerdns_init_db:
 
 {{ powerdns.config['gsqlite3-database'] }}:
   file.managed:
-    - user: pdns
-    - group: pdns
+    - user: {{ powerdns.user }}
+    - group: {{ powerdns.group }}
     - require:
       - cmd: powerdns_init_db
 

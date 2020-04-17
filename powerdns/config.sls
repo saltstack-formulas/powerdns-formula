@@ -9,9 +9,9 @@ powerdns_config:
     - name: {{ powerdns.config_file }}
     - source: salt://powerdns/files/pdns.conf
     - template: jinja
-    - user: root
-    - group: root
-    - mode: 600
+    - user: {{ powerdns.user }}
+    - group: {{ powerdns.group }}
+    - mode: '0600'
     - require:
       - pkg: powerdns
     - watch_in:
