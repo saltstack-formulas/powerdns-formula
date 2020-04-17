@@ -25,6 +25,7 @@ Debian:
   backend_pipe_pkg: pdns-backend-pipe
   backend_remote_pkg: pdns-backend-remote
   backend_sqlite3_pkg: pdns-backend-sqlite3
+  backend_sqlite3_pkg_sql: /usr/share/doc/pdns-backend-sqlite3/schema.sqlite3.sql
   config:
     config-dir: /etc/powerdns
     setgid: pdns
@@ -45,7 +46,9 @@ RedHat:
   backend_pgsql_pkg: pdns-backend-pgsql
   backend_pipe_pkg: pdns-backend-pipe
   backend_remote_pkg: pdns-backend-remote
-  backend_sqlite3_pkg: pdns-backend-sqlite3
+  backend_sqlite3_pkg: pdns-backend-sqlite
+  backend_sqlite3_pkg_sql: /usr/share/doc/packages/pdns/schema.sqlite3.sql
+  sqlite3_pkg: sqlite
   config:
     daemon: 'no'
     guardian: 'no'
@@ -68,6 +71,7 @@ Suse:
   backend_pipe_pkg: pdns-backend-pipe
   backend_remote_pkg: pdns-backend-remote
   backend_sqlite3_pkg: pdns-backend-sqlite3
+  backend_sqlite3_pkg_sql: /usr/share/doc/packages/pdns/schema.sqlite3.sql
 
 Gentoo: {}
 
