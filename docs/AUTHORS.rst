@@ -22,6 +22,9 @@ This list is sorted by the number of commits per contributor in *descending* ord
    * - :raw-html-m2r:`<img class='float-left rounded-1' src='https://avatars1.githubusercontent.com/u/287147?v=4' width='36' height='36' alt='@techhat'>`
      - `@techhat <https://github.com/techhat>`_
      - 5
+   * - :raw-html-m2r:`<img class='float-left rounded-1' src='https://avatars2.githubusercontent.com/u/10231489?v=4' width='36' height='36' alt='@myii'>`
+     - `@myii <https://github.com/myii>`_
+     - 5
    * - :raw-html-m2r:`<img class='float-left rounded-1' src='https://avatars2.githubusercontent.com/u/5655231?v=4' width='36' height='36' alt='@kpostrup'>`
      - `@kpostrup <https://github.com/kpostrup>`_
      - 5
