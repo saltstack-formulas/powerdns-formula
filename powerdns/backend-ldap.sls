@@ -2,11 +2,11 @@
 {%- from tplroot ~ "/map.jinja" import powerdns with context %}
 
 include:
-  - powerdns
+  - {{ tplroot }}
 
-powerdns_backend_mysql:
+powerdns_backend_ldap:
   pkg.installed:
-    - name: {{ powerdns.backend_mysql_pkg }}
+    - name: {{ powerdns.backend_ldap_pkg }}
     - require:
       - pkg: powerdns
     - watch_in:
