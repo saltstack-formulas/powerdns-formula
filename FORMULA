@@ -1,0 +1,9 @@
+name: powerdns
+os: Debian
+os_family: Debian
+version: 0.1.0
+release: 1
+minimum_version: 2018.3
+summary: powerdns formula
+description: Installs a basic PowerDNS authorative server, and enables different backend configurations
+top_level_dir: powerdns
