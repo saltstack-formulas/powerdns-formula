@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/saltstack-formulas/powerdns-formula/compare/v0.2.1...v0.2.2) (2020-04-17)
+
+
+### Bug Fixes
+
+* **conf-owner:** put `user` and `group` of `pdns` service in `map.jinja` ([c8a2c0d](https://github.com/saltstack-formulas/powerdns-formula/commit/c8a2c0d1219342e0d92bab3732db0b4b6222b607))
+
 ## [0.2.1](https://github.com/saltstack-formulas/powerdns-formula/compare/v0.2.0...v0.2.1) (2020-04-17)
 
 
