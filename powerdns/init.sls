@@ -1,4 +1,5 @@
-{% from "powerdns/map.jinja" import powerdns with context %}
+{%- set tplroot = tpldir.split('/')[0] %}
+{%- from tplroot ~ "/map.jinja" import powerdns with context %}
 
 {% set os_family = salt['grains.get']('os_family') %}
 
@@ -9,7 +10,7 @@ include:
 
 powerdns:
   pkg.installed:
-    - name: {{ powerdns.lookup.pkg }}
+    - name: {{ powerdns.pkg }}
     - refresh_db: True
     {% if os_family in ['Debian', 'RedHat'] %}
     - require:
@@ -17,7 +18,7 @@ powerdns:
     {% endif %}
 
   service.running:
-    - name: {{ powerdns.lookup.service }}
+    - name: {{ powerdns.service }}
     - enable: True
     - require:
       - pkg: powerdns

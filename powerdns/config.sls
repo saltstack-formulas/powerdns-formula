@@ -1,11 +1,12 @@
-{% from "powerdns/map.jinja" import powerdns with context %}
+{%- set tplroot = tpldir.split('/')[0] %}
+{%- from tplroot ~ "/map.jinja" import powerdns with context %}
 
 include:
   - powerdns
 
 powerdns_config:
   file.managed:
-    - name: {{ powerdns.lookup.config_file }}
+    - name: {{ powerdns.config_file }}
     - source: salt://powerdns/files/pdns.conf
     - template: jinja
     - user: root
@@ -15,3 +16,5 @@ powerdns_config:
       - pkg: powerdns
     - watch_in:
       - service: powerdns
+    - context:
+        powerdns: {{ powerdns | json }}
