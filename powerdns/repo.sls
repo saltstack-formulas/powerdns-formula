@@ -13,6 +13,4 @@ powerdns_server_repo:
     - file: /etc/apt/sources.list.d/powerdns.list
     - keyid: {{ powerdns.repo.keyid }}
     - keyserver: keys.gnupg.net
-    {% elif salt['grains.get']('os_family') == 'RedHat' %}
-    {# TODO: add RHEL/CentOS support #}
     {% endif %}

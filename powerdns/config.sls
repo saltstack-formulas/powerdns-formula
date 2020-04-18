@@ -11,7 +11,7 @@ powerdns_config:
     - template: jinja
     - user: {{ powerdns.user }}
     - group: {{ powerdns.group }}
-    - mode: '0600'
+    - mode: '0644'
     - require:
       - pkg: powerdns
     - watch_in:
