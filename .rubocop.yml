@@ -10,5 +10,7 @@ Metrics/BlockLength:
   ExcludedMethods:
     - control
     - describe
+  # Increase from default of `25`
+  Max: 30
 
 # Any offenses that should be fixed, e.g. collected via. `rubocop --auto-gen-config`
