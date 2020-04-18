@@ -2,6 +2,33 @@
 Changelog
 =========
 
+`0.3.1 <https://github.com/saltstack-formulas/powerdns-formula/compare/v0.3.0...v0.3.1>`_ (2020-04-18)
+----------------------------------------------------------------------------------------------------------
+
+Bug Fixes
+^^^^^^^^^
+
+
+* modify to get working on ``debian``\ , ``fedora`` & ``opensuse-leap`` (\ `0b130f0 <https://github.com/saltstack-formulas/powerdns-formula/commit/0b130f0deb8bffcbaccd3d5b8959a0d026d5cc38>`_\ )
+
+Continuous Integration
+^^^^^^^^^^^^^^^^^^^^^^
+
+
+* **kitchen+travis+inspec:** add initial platforms and test structure (\ `0b2180a <https://github.com/saltstack-formulas/powerdns-formula/commit/0b2180a183d0f2326e6811a1dadac93f394adfb2>`_\ )
+
+Documentation
+^^^^^^^^^^^^^
+
+
+* **readme:** update ``Testing`` section (\ `47232be <https://github.com/saltstack-formulas/powerdns-formula/commit/47232be82a3b7ebfb00872435ca76a2d4bd460a5>`_\ )
+
+Tests
+^^^^^
+
+
+* **inspec:** add tests (\ `45d97d3 <https://github.com/saltstack-formulas/powerdns-formula/commit/45d97d329247aa2e5b86ac7988cd94bbac2dc495>`_\ )
+
 `0.3.0 <https://github.com/saltstack-formulas/powerdns-formula/compare/v0.2.2...v0.3.0>`_ (2020-04-17)
 ----------------------------------------------------------------------------------------------------------
 
