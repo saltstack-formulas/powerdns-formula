@@ -65,7 +65,7 @@ Installs PowerDNS authorative server.
 Installs PowerDNS authorative server from official repostiory.
 
 ``powerdns.backend-ldap``
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Installs PowerDNS LDAP backend package.
 
