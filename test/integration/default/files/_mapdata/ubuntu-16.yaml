@@ -1,0 +1,39 @@
+# yamllint disable rule:indentation rule:line-length
+# Ubuntu-16.04
+---
+values:
+  powerdns:
+    arch: amd64
+    backend_geoip_pkg: pdns-backend-geoip
+    backend_ldap_pkg: pdns-backend-ldap
+    backend_lua_pkg: pdns-backend-lua
+    backend_mydns_pkg: pdns-backend-mydns
+    backend_mysql_pkg: pdns-backend-mysql
+    backend_odbc_pkg: pdns-backend-odbc
+    backend_opendbx_pkg: pdns-backend-opendbx
+    backend_pgsql_pkg: pdns-backend-pgsql
+    backend_pipe_pkg: pdns-backend-pipe
+    backend_remote_pkg: pdns-backend-remote
+    backend_sqlite3_pkg: pdns-backend-sqlite3
+    backend_sqlite3_pkg_sql: /usr/share/doc/pdns-backend-sqlite3/schema.sqlite3.sql
+    config:
+      allow-axfr-ips: 127.0.0.0/8,::1
+      api: 'yes'
+      api-key: d34db33f
+      config-dir: /etc/powerdns
+      gsqlite3-database: /var/lib/powerdns/pdns.sqlite3
+      gsqlite3-dnssec: 'yes'
+      launch: gsqlite3
+      setgid: pdns
+      setuid: pdns
+      webserver: 'yes'
+      webserver-port: 8081
+    config_file: /etc/powerdns/pdns.conf
+    group: pdns
+    pkg: pdns-server
+    repo:
+      keyid: FF389421CBC8B383
+      release: master
+    service: pdns
+    sqlite3_pkg: sqlite3
+    user: pdns
