@@ -1,0 +1,21 @@
+# yamllint disable rule:indentation rule:line-length
+# Arch
+---
+values:
+  powerdns:
+    arch: amd64
+    config:
+      allow-axfr-ips: 127.0.0.0/8,::1
+      api: 'yes'
+      api-key: d34db33f
+      gsqlite3-database: /var/lib/powerdns/pdns.sqlite3
+      gsqlite3-dnssec: 'yes'
+      launch: gsqlite3
+      webserver: 'yes'
+      webserver-port: 8081
+    group: pdns
+    repo:
+      keyid: FF389421CBC8B383
+      release: master
+    sqlite3_pkg: sqlite3
+    user: pdns
