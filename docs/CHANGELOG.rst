@@ -2,6 +2,23 @@
 Changelog
 =========
 
+`0.3.3 <https://github.com/saltstack-formulas/powerdns-formula/compare/v0.3.2...v0.3.3>`_ (2020-12-27)
+----------------------------------------------------------------------------------------------------------
+
+Continuous Integration
+^^^^^^^^^^^^^^^^^^^^^^
+
+
+* **commitlint:** ensure ``upstream/master`` uses main repo URL [skip ci] (\ `56c2c48 <https://github.com/saltstack-formulas/powerdns-formula/commit/56c2c485e5b0d221f39ec62539f876fba16ffa47>`_\ )
+* **gitlab-ci:** add ``rubocop`` linter (with ``allow_failure``\ ) [skip ci] (\ `8577924 <https://github.com/saltstack-formulas/powerdns-formula/commit/8577924fff419acf9d8410c8fd3f581a2b0fceef>`_\ )
+
+Tests
+^^^^^
+
+
+* **_mapdata:** generate verification files (\ `99257e5 <https://github.com/saltstack-formulas/powerdns-formula/commit/99257e551c122986e616fae6161461c4e0e056f1>`_\ )
+* **map:** verify ``map.jinja`` dump using ``_mapdata`` state (\ `4279f04 <https://github.com/saltstack-formulas/powerdns-formula/commit/4279f0498d1449087bc41d0b2d64d70ff8fa657d>`_\ )
+
 `0.3.2 <https://github.com/saltstack-formulas/powerdns-formula/compare/v0.3.1...v0.3.2>`_ (2020-12-16)
 ----------------------------------------------------------------------------------------------------------
 

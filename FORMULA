@@ -1,7 +1,7 @@
 name: powerdns
 os: Debian
 os_family: Debian
-version: 0.3.2
+version: 0.3.3
 release: 1
 minimum_version: 2018.3
 summary: powerdns formula
