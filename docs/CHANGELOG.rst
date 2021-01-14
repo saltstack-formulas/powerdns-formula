@@ -2,6 +2,21 @@
 Changelog
 =========
 
+`0.3.4 <https://github.com/saltstack-formulas/powerdns-formula/compare/v0.3.3...v0.3.4>`_ (2021-01-14)
+----------------------------------------------------------------------------------------------------------
+
+Bug Fixes
+^^^^^^^^^
+
+
+* **_mapdata:** ensure map data is directly under ``values`` (\ `fcc7200 <https://github.com/saltstack-formulas/powerdns-formula/commit/fcc7200d21524f8e334256b8855bdc5aef258601>`_\ )
+
+Tests
+^^^^^
+
+
+* **_mapdata:** update for ``_mapdata/init.sls`` change (\ `bf57752 <https://github.com/saltstack-formulas/powerdns-formula/commit/bf577521aec4b48058a2c7901fd8081de7e21711>`_\ )
+
 `0.3.3 <https://github.com/saltstack-formulas/powerdns-formula/compare/v0.3.2...v0.3.3>`_ (2020-12-27)
 ----------------------------------------------------------------------------------------------------------
 
