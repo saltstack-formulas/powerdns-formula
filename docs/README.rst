@@ -1,7 +1,5 @@
-.. _readme:
-
-powerdns
-========
+powerdns-formula
+================
 
 |img_travis| |img_sr|
 
@@ -94,7 +92,7 @@ Installs the required pdnsapi python module. Requires pip to work.
 To use this module, you need to have the following set either in pillar
 or your minion config:
 
-.. code:: SaltStack
+.. code:: yaml
 
 
     pdns.url: "http://127.0.0.1:8081"
