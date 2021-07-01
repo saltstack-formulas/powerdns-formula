@@ -12,5 +12,5 @@ powerdns_server_repo:
     - name: {{ repo }}
     - file: /etc/apt/sources.list.d/powerdns.list
     - keyid: {{ powerdns.repo.keyid }}
-    - keyserver: keys.gnupg.net
+    - keyserver: keyserver.ubuntu.com
     {% endif %}
