@@ -11,13 +11,38 @@
 # osfingermap: {}
 ---
 # os: Debian
-Debian-10: {}
-Debian-9: {}
-Debian-8: {}
+Debian-12:
+  repo_aptkey: False
+  repo_signedby: signed-by=/etc/apt/keyrings/powerdns.gpg
+
+Debian-11:
+  repo_aptkey: True
+  repo_signedby: ""
+
+Debian-10:
+  repo_aptkey: True
+  repo_signedby: ""
+
+Debian-9:
+  repo_aptkey: True
+  repo_signedby: ""
+
+Debian-8:
+  repo_aptkey: True
+  repo_signedby: ""
 
 # os: Ubuntu
-Ubuntu-18.04: {}
-Ubuntu-16.04: {}
+Ubuntu-22.04:
+  repo_aptkey: False
+  repo_signedby: signed-by=/etc/apt/keyrings/powerdns.gpg
+
+Ubuntu-18.04:
+  repo_aptkey: True
+  repo_signedby: ""
+
+Ubuntu-16.04:
+  repo_aptkey: True
+  repo_signedby: ""
 
 # os: Fedora
 Fedora-31: {}
