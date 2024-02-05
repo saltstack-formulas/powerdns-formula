@@ -20,9 +20,9 @@ from distutils.version import LooseVersion  # pylint: disable=import-error,no-na
 import json
 import re
 from pprint import pformat
+from six import string_types
 
 # Import salt libs
-from salt.ext.six import string_types
 from salt.exceptions import get_error_message as _get_error_message
 
 
@@ -97,7 +97,7 @@ def zone_exists(name):
     except PDNSException as e:
         return False
 
-    
+
     return True
 
 def get_zone(name):
@@ -111,7 +111,7 @@ def get_zone(name):
     except PDNSException as e:
         return "Exception while getting zone: '%s'" % (e)
 
-    
+
     return [{'name': record.name, 'type': record.type, 'ttl': record.ttl, 'records': [record2 for record2 in record.records]} for record in zone.records]
 
 def get_record(zone, name, rtype):
