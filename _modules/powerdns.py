@@ -218,7 +218,7 @@ def post_zone(zone, payload, session=None):
 
   return _handle_result(result, 201)
 
-def patch_zone(zone, payload, changetype, session=None):
+def patch_zone(zone, payload, session=None):
   if session is None:
     session = _init()
 
@@ -260,7 +260,7 @@ def patch_rrsets(zone, changetype, session, recname=None, rectype=None, record=N
       }
     )
 
-  return patch_zone(zone, payload, changetype, session)
+  return patch_zone(zone, payload, session)
 
 def create_record(zone, recname, recttl, rectype, record, session=None):
   return patch_rrsets(zone, recname=recname, rectype=rectype, changetype='REPLACE', session=session, record=record, recttl=recttl)
