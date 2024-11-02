@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 '''
 Module to provide access to the power DNS http API
 
@@ -12,220 +11,261 @@ Module to provide access to the power DNS http API
     This data can also be passed into pillar. Options passed into opts will
     overwrite options passed into pillar.
 '''
-from __future__ import absolute_import
 
-# Import python libs
-import logging
-from distutils.version import LooseVersion  # pylint: disable=import-error,no-name-in-module
-import json
-import re
-from pprint import pformat
-from six import string_types
-
-# Import salt libs
-from salt.exceptions import get_error_message as _get_error_message
-
-
-# Import third party libs
 try:
-    import pdnsapi as api
-    from pdnsapi.exceptions import (
-        PDNSAccessDeniedException, PDNSNotFoundException,
-        PDNSProtocolViolationException, PDNSServerErrorException,
-        PDNSException)
-
-    HAS_PDNSAPI = True
+    from requests import HTTPError, Request
+    from requests_toolbelt import sessions
+    HAS_REQUESTS = True
 except ImportError:
-    HAS_PDNSAPI = False
+    HAS_REQUESTS = False
 
+import logging
 log = logging.getLogger(__name__)
 
+from simplejson.errors import JSONDecodeError
 
 def __virtual__():
-    '''
-    Only load this module if pdnsapi is installed
-    '''
-    if HAS_PDNSAPI:
-        return 'powerdns'
-    else:
-        return (False, 'The powerdns execution module cannot be loaded: the pdnsapi library is not available.')
+  '''
+  Only load this module if requests is installed
+  '''
+  if HAS_REQUESTS:
+    return 'powerdns'
+  else:
+    return (False, 'The powerdns execution module cannot be loaded: the requests and/or requests_toolbelt libraries are not available.')
 
-def _canonicalize_name(name):
-    if not name.endswith('.'):
-        return name + '.'
-    else:
-        return name
+def _init():
+  url = __salt__['config.option']('pdns.url')
+  server_id = __salt__['config.option']('pdns.server_id')
+  api_key = __salt__['config.option']('pdns.api_key')
 
+  session = sessions.BaseUrlSession(base_url=f'{url}/api/v1/servers/{server_id}/')
+  session.headers = {
+    'Accept': 'application/json',
+    'X-API-Key': str(api_key),
+  }
 
-def _connect():
-    url = __salt__['config.option']('pdns.url')
-    server_id = __salt__['config.option']('pdns.server_id')
-    api_key = __salt__['config.option']('pdns.api_key')
+  log.debug(session.base_url)
+  log.debug(session.headers)
 
-    log.debug("Attempting to connect: '%s' '%s' '%s'" % (url, server_id, api_key))
+  get_root(session)
 
-    try:
-        conn = api.init_api(url, server_id, api_key)
+  return session
 
-    except PDNSException as e:
-        log.error("Exception while opening API connection: '%s'" % (e))
+def new_session(is_state_module):
+  if is_state_module:
+    return _init()
+
+def get_root(session=None):
+  log.debug('Requesting root')
+  if session is None:
+    session = _init()
+  log.debug(session.base_url)
+  test_request = Request(method='GET', url=session.base_url.rstrip('/'))
+  log.debug(test_request.url)
+  test_request = session.prepare_request(test_request)
+  try:
+    session.send(test_request).raise_for_status()
+  except HTTPError as e:
+    log.debug(f'Exception while connecting to the PowerDNS API: {e}')
+    return False
+
+def _session_get(session, path, raw=False):
+  response = session.get(path).json()
+
+  if raw:
+    return response, None
+
+  if isinstance(response, list) or isinstance(response, dict) and not 'error' in response:
+    return response, True
+
+  elif isinstance(response, dict) and 'error' in response:
+    return response['error'], False
+
+  return None, False
+
+def get_zones(session=None):
+  log.debug('Requesting zones')
+  if session is None:
+    session = _init()
+  body, result = _session_get(session, 'zones')
+  if not result:
+    return f'Failed to query zones: {body}'
+  log.debug("Zonelist: %s" % (body))
+
+  return [zone['name'] for zone in body]
+
+def get_zone(name, session=None):
+  log.debug(f'Requesting zone "{name}"')
+  if session is None:
+    session = _init()
+  body, result = _session_get(session, f'zones/{name}')
+  if not result:
+    return f'Failed to query zone: {body}'
+
+  return body
+
+def get_zone_rrsets(name, raw=False, session=None):
+  log.debug(f'Requesting zone "{name}" records')
+  zone = get_zone(name, session)
+
+  if isinstance(zone, dict):
+    rrsets = zone.get('rrsets', [])
+    if raw:
+      return rrsets
+
+    return [
+      {
+        'name': rrset.get('name'),
+        'records': rrset.get('records', []),
+        'ttl': rrset.get('ttl'),
+        'type': rrset.get('type'),
+      } for rrset in rrsets
+    ]
+
+  return zone
+
+def get_zone_exists(name, session=None):
+  if session is None:
+    session = _init()
+  response, _ = _session_get(session, f'zones/{name}', raw=True)
+  if isinstance(response, dict):
+    if 'error' in response:
+      error = response['error']
+      if error == 'Not Found':
         return False
+      else:
+        return f'Failed to query zone: {error}'
 
-    log.debug("connected: '%s' '%s' '%s'" % (url, server_id, api_key))
-    return conn
+    # just checking a couple arbitrary attributes to make sure it's actually a zone object
+    elif 'id' in response and 'url' in response:
+      return True
 
-def list_zones():
-    conn = _connect()
+  return None
 
-    if not conn:
-        return "Failed to connect to powerDNS"
+def get_records(zone, recname, rectype=None, session=None):
+  log.debug(f'Requesting zone "{zone}" record "{recname}"')
+  if session is None:
+    session = _init()
 
-    log.debug("Attempting to pull zonelist")
-    zonelist = conn.zones
-    log.debug("Zonelist: %s" % (zonelist))
+  recname = canonicalize_recname(zone, recname)
+  rrsets = get_zone_rrsets(zone, raw=False, session=session)
 
-    return [zone.name for zone in zonelist]
+  log.debug(rrsets)
 
-def zone_exists(name):
-    conn = _connect()
+  records = []
 
-    if not conn:
-        return False
+  if not isinstance(rrsets, list):
+    return rrsets
 
-    try:
-        zone = conn.get_zone(name)
-    except PDNSException as e:
-        return False
+  for rrset in rrsets:
+    if rrset['name'] == recname and ( rrset['type'] == rectype and rectype is not None ):
+      records.append(rrset)
+
+  return records
+
+def canonicalize_name(name):
+  if not name.endswith('.'):
+    name = f'{name}.'
+
+  return name
+
+def canonicalize_recname(zone, recname):
+  canonzone = canonicalize_name(zone)
+  if recname == '.':
+    return canonzone
+
+  if recname.endswith('.') or recname.endswith(canonzone):
+    return recname
+
+  #if zone in recname:
+  #  return canonzone
+
+  if recname.endswith(zone):
+    name = recname
+
+  else:
+    name = f'{recname}.{zone}'
+
+  return canonicalize_name(name)
+
+def _handle_result(result, expect):
+  status = result.status_code
+  log.debug(f'{status} {result.text}')
+
+  try:
+    output = result.json()
+  except JSONDecodeError:
+    output = result.text
+
+  if isinstance(output, dict) and 'error' in output:
+    output = output['error']
+
+  if status == expect:
+    return True, status, output
+
+  return False, status, output
+
+def post_zone(zone, payload, session=None):
+  if session is None:
+    session = _init()
+
+  if get_zone_exists(zone):
+    return False, f'Failed to post: zone "{zone}" already exists', None
+
+  log.debug(payload)
+
+  result = session.post(f'zones', json=payload)
+
+  return _handle_result(result, 201)
+
+def patch_zone(zone, payload, session=None):
+  if session is None:
+    session = _init()
+
+  if not get_zone_exists(zone):
+    return False, f'Failed to patch: zone "{zone}" does not exist', None
+
+  log.debug(payload)
+
+  result = session.patch(f'zones/{zone}', json=payload)
+  
+  return _handle_result(result, 204)
+
+def patch_rrsets(zone, changetype, session, recname=None, rectype=None, record=None, recttl=None, rrsets=None):
+  payload = {}
+
+  if rrsets:
+    payload['rrsets'] = rrsets
+    for i, _ in enumerate(payload['rrsets']):
+      payload['rrsets'][i]['changetype'] = changetype
+
+  else:
+    payload['rrsets'] = [
+      {
+        'name': canonicalize_recname(zone, recname),
+        'changetype': changetype,
+        'type': rectype,
+      }
+    ]
+
+  if changetype == 'REPLACE' and not rrsets:
+    payload['rrsets'][0].update(
+      {
+        'records': [
+          {
+            'content': record,
+          }
+        ],
+        'ttl': recttl,
+      }
+    )
+
+  return patch_zone(zone, payload, session)
+
+def create_record(zone, recname, recttl, rectype, record, session=None):
+  return patch_rrsets(zone, recname=recname, rectype=rectype, changetype='REPLACE', session=session, record=record, recttl=recttl)
+
+def delete_record(zone, recname, rectype, session=None):
+  return patch_rrsets(zone, recname=recname, rectype=rectype, changetype='DELETE', session=session)
 
 
-    return True
-
-def get_zone(name):
-    conn = _connect()
-
-    if not conn:
-        return "Failed to connect to powerDNS"
-
-    try:
-        zone = conn.get_zone(name)
-    except PDNSException as e:
-        return "Exception while getting zone: '%s'" % (e)
-
-
-    return [{'name': record.name, 'type': record.type, 'ttl': record.ttl, 'records': [record2 for record2 in record.records]} for record in zone.records]
-
-def get_record(zone, name, rtype):
-    conn = _connect()
-
-    if not conn:
-        return "Failed to connect to powerDNS"
-
-    try:
-        record, _ = _get_record_zone(conn, zone, name, rtype)
-    except PDNSException as e:
-        return "Could not get record '%s'" % (e)
-
-    return { 'zone': zone, 'name': record.name, 'type': record.type, 'ttl': record.ttl, 'records': [rec for rec in record.records]}
-
-def _get_record_zone(conn, zone, name, rtype):
-    canonical_zone = _canonicalize_name(zone)
-
-    zone_rec = conn.get_zone(canonical_zone)
-
-    if not name.endswith(zone):
-        name = name + '.' + zone
-    record = zone_rec.get_record(_canonicalize_name(name), rtype)
-
-    return record, zone_rec
-
-def del_record(zone, name, rtype):
-    conn = _connect()
-
-    if not conn:
-        return "Failed to connect to powerDNS"
-
-    try:
-        record, zone_rec = _get_record_zone(conn, zone, name, rtype)
-    except PDNSException as e:
-        return "Could not get record '%s'" % (e)
-
-    try:
-        zone_rec.delete_record(record)
-    except PDNSException as e:
-        return "Could not delete record '%s'" % (e)
-
-    return True
-
-def add_zone(zone, name_servers=None, records=None):
-    conn = _connect()
-
-    if not conn:
-        return "Failed to connect to powerDNS"
-
-    canonical_zone = _canonicalize_name(zone)
-
-    try:
-        zone = conn.create_zone(canonical_zone, name_servers, records)
-    except PDNSException as e:
-        return "Failed to create zone: '%s'" % (e)
-
-    return [{'name': record.name, 'type': record.type, 'ttl': record.ttl, 'records': [record2 for record2 in record.records]} for record in zone.records]
-
-def del_zone(zone):
-    conn = _connect()
-
-    if not conn:
-        log.error("Failed to connect to powerDNS")
-        return False
-
-    canonical_zone = _canonicalize_name(zone)
-
-    try:
-        zone = conn.delete_zone(canonical_zone)
-    except PDNSException as e:
-        log.error("Failed to delete zone: '%s'" % (e))
-        return False
-
-    return True
-
-def add_record(zone, name, rtype, ttl=300, **kwargs):
-    conn = _connect()
-
-    if not conn:
-        log.error("Failed to connect to powerDNS")
-        return False
-
-    if 'records' not in kwargs:
-        log.error("Must specify records.  Ex: records='[ list, of, records ]'")
-        return False
-
-    canonical_zone = _canonicalize_name(zone)
-
-    try:
-        zone_rec = conn.get_zone(canonical_zone)
-    except PDNSException as e:
-        log.error("Could not get zone '%s': '%s'" % (canonical_zone, e))
-        return False
-
-    if not name.endswith(zone):
-        name = name + '.' + zone
-
-    record = api.Record(_canonicalize_name(name), rtype, kwargs['records'], ttl)
-
-    try:
-        foo = zone_rec.add_record(record)
-    except PDNSException as e:
-        log.error("add_record failed: '%s'" % (e))
-        return False
-
-    return True
-
-#    return { 'zone': canonical_zone, 'name': record.name, 'type': record.type, 'ttl': record.ttl, 'records': [rec for rec in record.records]}
-
-def argtest(*args, **kwargs):
-    #log.error("'%s'" % (pformat(kwargs)))
-
-    if '__id__' in kwargs:
-        kwargs['YAY'] = 'Called from STATE'
-    kwargs['args'] = args
-    return kwargs
